@@ -1,39 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import api from '../../api/AxiosConfig';
-import ShowAllTable from "./ShowAllTable";
+import ShowAllTableSSE from "./ShowAllTableSSE";
+import FetchEventSourceConfig from '../../api/FetchEventSourceConfig';
 
 function HealthRecordTable() {
     // update the variables
     const tableName = "All Health Records";
-    const redirectLink = "https://example.com"
-    const subUrl = "/dashboard/health-records";
-
-    // get the data from the api
-    const [data, setData] = useState([]);
-
-    useEffect(() => {
-        const getRecords = async () => {
-            try {
-                const response = await api.get(subUrl);
-                const modifiedData = response.data.map(row => ({
-                    ...row,
-                    link: `${redirectLink}/${row.id}`
-                }));
-                setData(modifiedData);
-            } catch (err) {
-                if (err.response) {
-                    console.log("this is an error");
-                }
-            }
-        };
-        getRecords();
-    }, []);
+    const redirectLink = "http://localhost:3000/records/update"
+    const subUrl = "dashboard/health-records";
+    
+    const { data, isLoading } = FetchEventSourceConfig(subUrl);
 
     const columns = [
         {
             header: 'ID',
             accessorKey: 'id',
-            footer: 'ID'
+            footer: 'ID',
         },
         {
             header: 'Male',
@@ -114,17 +94,12 @@ function HealthRecordTable() {
             header: 'Ten Year CHD',
             accessorKey: 'tenYearCHD',
             footer: 'Ten Year CHD',
-        },
-        {
-            header: 'Link',
-            accessorKey: 'link',
-            footer: 'Link',
-        },
+        }
     ]
 
     return (
         <>
-            <ShowAllTable tableName={tableName} data={data} columns={columns}/>
+            <ShowAllTableSSE isLoading={isLoading} redirectLink={redirectLink} tableName={tableName} data={data} columns={columns} />
         </>
     );
 }

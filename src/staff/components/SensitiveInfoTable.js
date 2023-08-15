@@ -1,33 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import api from '../../api/AxiosConfig';
-import ShowAllTable from "./ShowAllTable";
+import ShowAllTableSSE from "./ShowAllTableSSE";
+import FetchEventSourceConfig from '../../api/FetchEventSourceConfig';
 
 function SensitiveInfoTable() {
-     // update the variables
-     const tableName = "All Sensitive Info Records";
-     const redirectLink = "https://example.com"
-     const subUrl = "/dashboard/sensitive-info";
- 
-     // get the data from the api
-     const [data, setData] = useState([]);
- 
-     useEffect(() => {
-         const getRecords = async () => {
-             try {
-                 const response = await api.get(subUrl);
-                 const modifiedData = response.data.map(row => ({
-                     ...row,
-                     link: `${redirectLink}/${row.id}`
-                 }));
-                 setData(modifiedData);
-             } catch (err) {
-                 if (err.response) {
-                     console.log("this is an error");
-                 }
-             }
-         };
-         getRecords();
-     }, []);
+    // update the variables
+    const tableName = "All Sensitive Info Records";
+    const redirectLink = "http://localhost:3000/patients/update"
+    const subUrl = "dashboard/sensitive-info";
+
+    const { data, isLoading } = FetchEventSourceConfig(subUrl);
 
     const columns = [
         {
@@ -55,16 +35,11 @@ function SensitiveInfoTable() {
             accessorKey: 'phoneNumber',
             footer: 'Phone Number',
         },
-        {
-            header: 'Link',
-            accessorKey: 'link',
-            footer: 'Link',
-        },
     ]
 
     return (
         <>
-            <ShowAllTable tableName={tableName} data={data} columns={columns}/>
+            <ShowAllTableSSE isLoading={isLoading} redirectLink={redirectLink} tableName={tableName} data={data} columns={columns} />
         </>
     );
 }
