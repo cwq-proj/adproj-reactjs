@@ -26,6 +26,7 @@ import Tab from "@mui/material/Tab";
 import AppBar from "@mui/material/AppBar";
 import CssBaseline from "@mui/material/CssBaseline";
 import Toolbar from "@mui/material/Toolbar";
+import api from '../../api/AxiosConfig';
 
 
 function CustomTabPanel(props) {
@@ -77,13 +78,16 @@ export default function Login() {
   const navigate = useNavigate();
   //set State to control the password visibility
   const [showPassword, setShowPassword] = React.useState(false);
+  const [password, setPassword] = React.useState('');
+  const [email, setEmail] = React.useState("");
+  const [isValidEmail, setIsValidEmail] = React.useState(true);
+  const [loading, setLoading] = React.useState(false);
+  const [value, setValue] = React.useState(0);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
   //set Email Validation
-  const [email, setEmail] = React.useState("");
-  const [isValidEmail, setIsValidEmail] = React.useState(true);
   const handleEmailChange = (event) => {
     const inputEmail = event.target.value;
     setEmail(inputEmail);
@@ -95,19 +99,78 @@ export default function Login() {
     return emailPattern.test(input);
   };
 
-  const [loading, setLoading] = React.useState(false);
-  function handleClick() {
+  async function handleClick() {
+    const loginData = {
+      email: email, 
+      password: password, 
+    };
     setLoading(true);
+    if (value === 0) {
+      //login type is staff
+      try{
+        const response = await api.post('/login/Adminlogin', loginData);
+        
+        if(response.status === 200){
+          const token = response.data.data;
+          localStorage.setItem('jwtToken', token);
+          console.log(token);   
+          setLoading(false);
+          alert("login successful");    
+          navigate("/staff")      
+        }else{
+          console.error("login failed");
+          alert(response.data.message);
+        }
+      } catch (error){
+        if (error.response && error.response.data && error.response.data.message) {
+          console.error("Error occurred:", error.response.data.message);
+          alert(error.response.data.message);
+        } else {
+          console.error("Unknown error occurred:", error);
+          alert('Error');
+        }
+      }
+
+    } else if (value === 1) {
+      //login type is user
+      try{
+        const response = await api.post('/login/login', loginData);
+        
+        if(response.status === 200){
+          const token = response.data.data;
+          localStorage.setItem('jwtToken', token);
+          console.log(token);
+          setLoading(false);
+          alert("login successful");  
+          navigate("/user")         
+        }else{
+          console.error("login failed");
+          alert(response.data.message);
+        }
+      } catch (error){
+        if (error.response && error.response.data && error.response.data.message) {
+          console.error("Error occurred:", error.response.data.message);
+          alert(error.response.data.message);
+        } else {
+          console.error("Unknown error occurred:", error);
+          alert('Error');
+        }
+      }
+    }
+    setLoading(false);
   }
 
   const handleClickTurnToForget = () => {
     navigate("/login/forgetpassword");
   };
 
-  const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+  };
+
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
   };
 
   const LoginForm = (
@@ -137,6 +200,8 @@ export default function Login() {
             <OutlinedInput
               id="outlined-adornment-password"
               type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={handlePasswordChange}
               endAdornment={
                 <InputAdornment position="end">
                   <IconButton
@@ -178,8 +243,9 @@ export default function Login() {
         variant="contained"
         sx={{
           background: "#199a8e",
-          width: "20vw",
+          width: 250,
           marginTop: "4vw",
+          ml:"10px",
           "&:hover": {
             background: "#1EA888",
           },
@@ -190,7 +256,7 @@ export default function Login() {
       >
         <span>Login</span>
       </LoadingButton>
-      <Typography sx={{ fontWeight: 500, fontSize: 10, marginTop: "2vw" }}>
+      <Typography sx={{ fontWeight: 500, fontSize: 10, marginTop: "2vw", ml:"10px" }}>
         New Member?
         <Link to="/register" style={{ color: "#1EA888", cursor: "pointer" }}>
           Register now
@@ -204,9 +270,9 @@ export default function Login() {
       <Paper
         elevation={3}
         sx={{
-          width: "33vw",
-          height: "60vh",
-          marginTop: "150px",
+          width: 400,
+          height: "75vh",
+          marginTop: "20px auto",
           padding: "40px",
         }}
       >

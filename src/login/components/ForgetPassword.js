@@ -20,6 +20,8 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import AppAppBar from './AppAppBar';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import api from '../../api/AxiosTokenConfig';
 
 
 export default function ForgetPassword(){
@@ -54,8 +56,22 @@ export default function ForgetPassword(){
       };
 
       const [loading, setLoading] = React.useState(false);
-      function handleClick() {
+      async function handleClick() {
         setLoading(true);
+        try{
+            const response = await api.get('api/staff');
+            if (response.status === 200) {
+                console.log(response);
+                alert('Successfully');
+            } else {
+                console.error('failed');
+                alert('failed');
+            }
+
+        }catch(error){
+            console.error('Error fetching data:', error)
+        }
+        setLoading(false);
       }
 
     const handleClickTurnToLogin = () =>{

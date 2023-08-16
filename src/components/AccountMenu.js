@@ -22,19 +22,32 @@ export default function AccountMenu({redirectLink}) {
   };
   const navigate = useNavigate();
   const handleLogout = async () => {
+    const confirmLogout = window.confirm("Are you sure you want to logout?");
+    
+    if (!confirmLogout) {
+      return; 
+    }
+  
     try {
       // Make a request to your logout API
-      const response = await axios.get("/login/logout");
-
-      if (response.ok) {
+      const response = await axios.get("login/logout", {
+        params:{
+          token: localStorage.getItem('jwtToken')
+        }
+      });
+  
+      if (response.status === 200 && response.data.message === "logout success") {
+        localStorage.removeItem('jwtToken');
         navigate("/");
       } else {
         console.error("Logout failed");
+        alert("Logout failed");
       }
     } catch (error) {
       console.error("Error during logout:", error);
     }
   };
+  
 
   return (
     <React.Fragment>
