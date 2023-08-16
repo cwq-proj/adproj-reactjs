@@ -1,8 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import Chart from 'chart.js/auto';
 
-const BinaryClassificationPlot = ({ title,
-  trueLabelCount, falseLabelCount }) => {
+const BinaryClassificationPlot = ({ title, trueLabel, falseLabel, trueLabelCount, falseLabelCount }) => {
   const chartRef = useRef(null);
   const chartInstanceRef = useRef(null);
 
@@ -13,7 +12,7 @@ const BinaryClassificationPlot = ({ title,
       }
 
       const ctx = chartRef.current.getContext('2d');
-      const labels = ['True', 'False'];
+      const labels = [trueLabel, falseLabel];
       const values = [trueLabelCount, falseLabelCount];
 
       const chartData = {

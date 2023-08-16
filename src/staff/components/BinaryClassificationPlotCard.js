@@ -4,7 +4,7 @@ import CardContent from '@mui/material/CardContent';
 import BinaryClassificationPlot from './BinaryClassificationPlot'
 
 function BinaryClassificationPlotCard({ jsonObj }) {
-    const {title, trueLabelCount, falseLabelCount} = jsonObj;
+    const {title, trueLabel, falseLabel, trueLabelCount, falseLabelCount} = jsonObj;
 
     return (
         <>
@@ -13,7 +13,7 @@ function BinaryClassificationPlotCard({ jsonObj }) {
                     title={title}
                 />
                 <CardContent>
-                    <BinaryClassificationPlot title={title} trueLabelCount={trueLabelCount} falseLabelCount={falseLabelCount} />
+                    <BinaryClassificationPlot title={title} trueLabel={trueLabel} falseLabel={falseLabel} trueLabelCount={trueLabelCount} falseLabelCount={falseLabelCount} />
                 </CardContent>
             </Card>
         </>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { DatePicker, Button } from "antd";
 import { BehaviorSubject } from "rxjs";
 import { tap, catchError } from "rxjs/operators";
@@ -11,7 +11,7 @@ function MyDateRangePicker() {
   const [apiResponse, setApiResponse] = useState(null);
   const applicationCacheSubject = new BehaviorSubject([]);
 
-  const fetchDataObservable = (dateRangeObject) =>
+  const fetchDataObservable = useCallback((dateRangeObject) =>
     new AjaxRxjs()
       .postMethod("/dashboard/new-users", dateRangeObject)
       .pipe(
@@ -20,14 +20,30 @@ function MyDateRangePicker() {
           console.error("Error:", error);
           return [];
         })
-      );
+      ), []);
 
-  const formatDate = (dateArray) => {
-    const [year, month, day] = dateArray;
-    return new Date(year, month - 1, day).toLocaleDateString();
+  const formatDateFrom = (date) => {
+    if (date === null) {
+      const currentDate = new Date();
+      currentDate.setMonth(currentDate.getMonth() - 1);
+      return currentDate.toISOString().substring(0, 10);
+    }
+
+    const formattedDate = new Date(date).toISOString().substring(0, 10);
+    return formattedDate;
   };
 
-  const fetchData = (dateRangeObject) => {
+  const formatDateTo = (date) => {
+    if (date === null) {
+      return new Date().toISOString().substring(0, 10);
+    }
+
+    const formattedDate = new Date(date).toISOString().substring(0, 10);
+    return formattedDate;
+  };
+
+  const fetchData = useCallback((dateRangeObject) => {
+    console.log(dateRangeObject);
     fetchDataObservable(dateRangeObject).subscribe({
       next: (response) => {
         console.log("API response:", response);
@@ -37,25 +53,35 @@ function MyDateRangePicker() {
         console.error("Error:", error);
       },
     });
-  };
+  }, [fetchDataObservable]);
 
   useEffect(() => {
     console.log("Fetching data...");
     const [startDate, endDate] = dates;
 
-    const dateRangeObject = {
-      dateFrom: startDate ? startDate.startOf('day').toDate() : null,
-      dateTo: endDate ? endDate.endOf('day').toDate() : null,
+    const formatDateToISOString = (date) => {
+      if (!date) return null;
+      return date.toISOString();
     };
 
+    const formatDateToUTC = (date) => {
+      if (!date) return null;
+      const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+      return formatDateToISOString(utcDate);
+    };
+
+    const dateRangeObject = {
+      dateFrom: formatDateToUTC(startDate ? startDate.toDate() : null),
+      dateTo: formatDateToISOString(endDate ? endDate.endOf('day').toDate() : null),
+    };
     fetchData(dateRangeObject);
-  }, [dates]);
+  }, [dates, fetchData]);
 
   useEffect(() => {
     const subscription = applicationCacheSubject.subscribe((records) => { });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [applicationCacheSubject]);
 
   const handleClearClick = () => {
     setDates([]); // Always set dates to an empty array
@@ -98,7 +124,7 @@ function MyDateRangePicker() {
                 </Typography>}
                 secondary={
                   <Typography style={{ ...secondaryTextStyle, color: 'darkgrey' }}>
-                    {formatDate(apiResponse.dateFrom)} to {formatDate(apiResponse.dateTo)}
+                    {formatDateFrom(apiResponse.dateFrom)} to {formatDateTo(apiResponse.dateTo)}
                   </Typography>}
               />
             </ListItem>

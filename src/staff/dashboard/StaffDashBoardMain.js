@@ -58,7 +58,7 @@ function StaffDashBoardMain() {
                     >
                       <span>
                         &nbsp;&nbsp;last updated: &nbsp;
-                        {(() => {
+                        {/* {(() => {
                           const [year, month, day] =
                             applicationCache.lastUpdated;
                           const formattedDate = new Date(
@@ -66,6 +66,10 @@ function StaffDashBoardMain() {
                             month - 1,
                             day
                           ).toLocaleDateString();
+                          return formattedDate;
+                        })()} */}
+                        {(() => {
+                          const formattedDate = applicationCache.lastUpdated.substring(0, 10);
                           return formattedDate;
                         })()}
                       </span>

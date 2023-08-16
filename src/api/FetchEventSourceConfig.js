@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 
-
 function FetchEventSourceConfig(subUrl) {
-    const baseUrl = 'http://localhost:8000';
+    // const baseUrl = 'http://localhost:8000';
+    const baseUrl = 'http://20.239.74.208:8000';
+    
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const dataFetchedRef = useRef(false);
@@ -11,11 +12,16 @@ function FetchEventSourceConfig(subUrl) {
     useEffect(() => {
         if (dataFetchedRef.current) return;
         dataFetchedRef.current = true;
+
+        const jwtToken = localStorage.getItem('jwtToken');
+
         const fetchData = async () => {
             await fetchEventSource(`${baseUrl}/${subUrl}`, {
                 method: 'GET',
                 headers: {
                     Accept: 'text/event-stream',
+                    // Add Authorization header if JWT token is available
+                    ...(jwtToken ? { 'Authorization': `Bearer ${jwtToken}` } : {}),
                 },
                 onopen(res) {
                     if (res.ok && res.status === 200) {

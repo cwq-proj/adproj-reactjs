@@ -6,7 +6,7 @@ import StaffTable from '../components/StaffTable';
 import { Route, Routes, Link } from 'react-router-dom';
 
 function AllRecordsDashboard({parentURL}) {
-    console.log(parentURL);
+    
     return (
         // Links to different parts of the dashboard
         <>

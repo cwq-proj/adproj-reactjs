@@ -2,7 +2,6 @@ import ResponsiveAppBar from "./components/ResponsiveAppBar";
 import AllRecordsDashboard from "./staff/dashboard/AllRecordsDashboard";
 import { Link, Route, Routes } from "react-router-dom";
 import LinkHealthRecord from "./user/dashboard/LinkHealthRecord";
-import TestComponent from "./components/TestComponent";
 import StaffDashBoardMain from "./staff/dashboard/StaffDashBoardMain";
 import LayoutUser from "./user/components/LayoutUser";
 import LayoutStaff from "./staff/components/LayoutStaff";

@@ -69,9 +69,9 @@ function ShowAllTable(props) {
                                                             const context = cell.getContext();
                                                             if (context.getValue) {
                                                                 const result = context.getValue();
-                                                                const year = result[0];
-                                                                const month = result[1];
-                                                                const day = result[2];
+                                                                const year = result.substring(0, 4);
+                                                                const month = result.substring(5, 7);
+                                                                const day = result.substring(8, 10);
                                                                 return `${day}/${month}/${year}`;
                                                             } else {
                                                                 return "No value available";

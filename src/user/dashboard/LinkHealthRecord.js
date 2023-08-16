@@ -1,16 +1,21 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import HealthRecordForm from '../components/HealthRecordForm';
 import { AjaxRxjs } from '../../api/AjaxRxjsConfig';
 import { BehaviorSubject } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import ShowAllTable from '../../staff/components/ShowAllTable';
+import jwtDecode from 'jwt-decode';
 
 // This component will pass the userId, firstName, lastName to HealthRecordForm Component
 function LinkHealthRecord() {
-    const userId = "64cbbfce08dc8591ccf9484b";
-    const firstName = "Regina";
-    const lastName = "West";
     const subUrl = "/health-records/get-records";
+
+    const jwtToken = localStorage.getItem('jwtToken');
+    const decodedToken = jwtToken ? jwtDecode(jwtToken) : null;
+
+    const [userId, setUserId] = useState(decodedToken ? decodedToken.id.toString() : '');
+    const [firstName, setFirstName] = useState(decodedToken ? decodedToken.firstname.toString() : '');
+    const [lastName, setLastName] = useState(decodedToken ? decodedToken.lastname.toString() : '');
 
     const healthRecordsSubject = new BehaviorSubject([]);
 
