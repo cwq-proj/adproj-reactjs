@@ -59,7 +59,7 @@ export default function ForgetPassword(){
       async function handleClick() {
         setLoading(true);
         try{
-            const response = await api.get('api/staff');
+            const response = await api.get('api/staff',null);
             if (response.status === 200) {
                 console.log(response);
                 alert('Successfully');
@@ -81,7 +81,13 @@ export default function ForgetPassword(){
 
     const LoginCard = (
         <ThemeProvider theme={theme}>
-            <Paper elevation={3} sx={{ width: '33vw', height: '60vh', marginTop: '150px', padding: '40px' }}>
+            <Paper elevation={3}         
+            sx={{
+                width: 400,
+                height: "65vh",
+                marginTop: "20px auto",
+                padding: "40px",
+                }}>
                 <Typography variant="h4" gutterBottom sx={{ fontWeight: 800, fontSize: 30 }}>
                     Forget Password?
                 </Typography>
@@ -105,7 +111,7 @@ export default function ForgetPassword(){
                         </FormControl>                        
                         <Box component="span" sx={{ p: 2, 
                                                 background: '#f7ffc9',
-                                                width: '88%',
+                                                width: '95%',
                                                 display: 'flex', 
                                                 alignItems: 'center',
                                                 m: '2%' ,
@@ -123,7 +129,7 @@ export default function ForgetPassword(){
                     loading={loading}
                     loadingPosition="end"
                     variant="contained"
-                    sx={{background:'#199a8e',width:'20vw',marginTop:'3vw',
+                    sx={{background:'#199a8e',width:300,marginTop:'1vw',ml:'10px',
                     '&:hover': {
                         background: '#1EA888', 
                     },
@@ -139,7 +145,7 @@ export default function ForgetPassword(){
                     onClick={handleClickTurnToLogin}
                     startIcon={<ArrowLeft />}
                     variant="contained"
-                    sx={{background:'#199a8e',width:'20vw',marginTop:'1vw',
+                    sx={{background:'#199a8e',width:300,marginTop:'1vw',ml:'10px',
                     '&:hover': {
                         background: '#1EA888', 
                     },
